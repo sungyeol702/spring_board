@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myspring.www.repository.UserDAO">
+<insert id="insert" parameterType="uvo">
+insert into user (id, pwd, nick_name)
+values(#{id}, #{pwd}, #{nickName})
+</insert>
+<select id="selectList" resultType="uvo">
+select id, nick_name, reg_at, last_login,grade
+from user
+order by reg_at desc
+</select>
+<select id="selectDetail" parameterType="string" resultType="uvo">
+select * from user
+where id = #{id}
+</select>
+<select id="selectLogin" parameterType="uvo" resultType="uvo">
+select id,nick_name,grade
+from user
+where id = #{id} and pwd=#{pwd}
+</select>
+<select id="selectId" parameterType="string" resultType="int">
+select count(id) from user where id = #{id}
+</select>
+<update id="update" parameterType="uvo">
+update user set pwd = #{pwd}, nick_name= #{nickName}, grade = #{grade}
+where id = #{id}
+</update>
+<update id="lastLogin" parameterType="string">
+update user set last_login = now()
+where id = #{id}
+</update>
+<delete id="delete" parameterType="string" >
+delete from user where id =#{id}
+</delete>
+</mapper>

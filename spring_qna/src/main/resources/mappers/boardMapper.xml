@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myspring.www.repository.BoardDAO">
+<sql id="search">
+		 <!-- test안에 type는 쿼리문이아니고 마이바티스 문법이기때문에 #{} 사용 안해도됨 -->
+		<if test="scope != null">
+		<trim prefix="and (" suffix=")" prefixOverrides="OR">
+			<foreach collection="scopeToArray" item="type">
+				<trim prefix="or">
+					<choose>
+						<when test="scope == 'h'.toString()">
+		 					category = "html" and title like concat('%',#{kwd},'%')
+		 				</when>
+						<when test="scope == 'c'.toString()">
+		 					category = "css" and title like concat('%',#{kwd},'%')
+		 				</when>
+						<when test="scope == 's'.toString()">
+		 					category = "js" and title like concat('%',#{kwd},'%')
+		 				</when>
+						<when test="scope == 'j'.toString()">
+		 					category = "java" and title like concat('%',#{kwd},'%')
+		 				</when>
+						<when test="scope == 'r'.toString()">
+		 					category = "spring" and title like concat('%',#{kwd},'%')
+		 				</when>
+					</choose>
+				</trim>
+			</foreach>
+		</trim>
+
+		</if>
+	</sql>
+	<insert id="insert" parameterType="bvo">
+		insert into board (title,content,writer,category,file_count)
+		values (#{title}, #{content}, #{writer},#{category},#{fileCount})
+	</insert>
+	<select id="selectList" resultType="bvo" parameterType="pgvo">
+		select a.bno ,title, category, read_count, cmt_qty, reg_at, file_count
+		from( select bno from board
+		where bno > 0 <include refid="search"/>
+		order by bno desc
+		limit #{pageStart}, #{qty}
+		) a left join board b
+		on a.bno = b.bno
+	</select>
+	<select id="selectOne" parameterType="long" resultType="bvo">
+		select * from board
+		where bno = #{bno}
+	</select>
+	<select id="selectTotalCount" resultType="int" parameterType="pgvo">
+		select count(bno) from board
+		where bno > 0 <include refid="search"/>
+	</select>
+	<select id="selectLastbno" resultType="long">
+		select max(bno) from board
+	</select>
+	<update id="update" parameterType="bvo">
+		update board set title = #{title}, content = #{content},
+		category = #{category}, file_count = #{fileCount}
+		where bno = #{bno}
+	</update>
+	<update id="updateReadCount" >
+	update board set read_count = read_count + #{i}
+	where bno = #{bno}
+	</update>
+	<update id="updateCmtQty" >
+	update board set cmt_qty = cmt_qty + #{i}
+	where bno = #{bno}
+	</update>
+	<update id="deleteFileCount">
+	update board set file_count = file_count - #{i}
+	where bno= #{bno}
+	</update>
+	
+	<delete id="delete" parameterType="long">
+		delete from board where bno = #{bno}
+	</delete> 
+
+</mapper>

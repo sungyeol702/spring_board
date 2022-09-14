@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.myspring.www.repository.ImageDAO">
+	<insert id="insertImage" parameterType="ivo">
+		insert into image_file
+		(uuid, save_dir, file_name, bno, file_size)
+		values
+		(#{uuid}, #{saveDir},
+		#{fileName}, #{bno}, #{fileSize})
+	</insert>
+	<select id="selectListImage" parameterType="long"
+		resultType="ivo">
+		select * from image_file where bno = #{bno}
+	</select>
+	<select id="selectBno" parameterType="String" resultType="long"> 
+	select bno from image_file where uuid = #{uuid}
+	</select>
+	<delete id="deleteImage" parameterType="string">
+		delete from image_file where uuid = #{uuid}
+	</delete>
+	<delete id="deleteAllImage" parameterType="long">
+		delete from image_file  where bno = #{bno}
+	</delete>
+	
+</mapper>
